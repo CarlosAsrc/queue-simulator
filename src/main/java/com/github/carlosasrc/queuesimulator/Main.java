@@ -4,12 +4,13 @@ import com.github.carlosasrc.queuesimulator.io.InputManager;
 import com.github.carlosasrc.queuesimulator.model.ScheduledEvent;
 import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws CloneNotSupportedException {
+    public static void main(String[] args) throws CloneNotSupportedException, IOException {
         ReportService reportService = new ReportService();
         InputManager inputManager = new InputManager();
 
