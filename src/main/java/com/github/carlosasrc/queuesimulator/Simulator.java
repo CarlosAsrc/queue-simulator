@@ -4,9 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Component
 @AllArgsConstructor
@@ -16,14 +14,12 @@ public class Simulator {
     private MathUtil mathUtil = new MathUtil();
 //    private final FileManager fileManager;
 
-    private Double time;
-    private Double lastArrivalTime;
-    private Double lastOutputTime;
+    private double time;
     private List<SchedulerEvent> events;
     private SimpleQueue queue;
 
 //    @EventListener(ApplicationReadyEvent.class)
-    public void run() {
+    public void run() throws InterruptedException {
         queue = SimpleQueue.builder()
                 .clientsCount(0)
                 .servers(1)
@@ -35,17 +31,19 @@ public class Simulator {
                 .finalAttendance(5)
                 .build();
 
-        events = Collections.singletonList(SchedulerEvent.builder()
+        events = new ArrayList<>();
+        SchedulerEvent event = SchedulerEvent.builder()
                 .time(3)
                 .type("ARRIVAL")
-                .build());
+                .build();
+        events.add(event);
 
         executeEvent();
 
     }
 
-    private void executeEvent() {
-        while (!events.isEmpty()) {
+    private void executeEvent() throws InterruptedException {
+        for (int i=1; i<=100000; i++) {
             System.out.println(queue.toString());
             SchedulerEvent event = getNextEvent();
             if(event.getType().equals("ARRIVAL")) {
@@ -53,6 +51,8 @@ public class Simulator {
             } else {
                 executeOutput(event);
             }
+
+            Thread.sleep(1000);
         }
     }
 
@@ -63,6 +63,8 @@ public class Simulator {
             if(queue.getClientsCount() <= queue.getServers()) {
                 scheduleOutput();
             }
+        } else {
+            queue.addLoss();
         }
         scheduleArrival();
     }
@@ -76,32 +78,31 @@ public class Simulator {
     }
 
     private void scheduleArrival() {
-        events.add(SchedulerEvent.builder()
-                .time(mathUtil.getNextRandomTime(queue.getInitialArrive(), queue.getFinalArrive()) + lastArrivalTime)
-                .build()
-        );
+        SchedulerEvent event = SchedulerEvent.builder()
+                .type("ARRIVAL")
+                .time(mathUtil.getNextRandomTime(queue.getInitialArrive(), queue.getFinalArrive()) + time)
+                .build();
+        events.add(event);
     }
 
     private void scheduleOutput() {
-        events.add(SchedulerEvent.builder()
-                .time(mathUtil.getNextRandomTime(queue.getInitialAttendance(), queue.getFinalAttendance()) + lastOutputTime)
-                .build()
-        );
+        SchedulerEvent event =SchedulerEvent.builder()
+                .type("OUTPUT")
+                .time(mathUtil.getNextRandomTime(queue.getInitialAttendance(), queue.getFinalAttendance()) + time)
+                .build();
+        events.add(event);
     }
 
     private SchedulerEvent getNextEvent() {
-        return events.stream()
+        SchedulerEvent event =  events.stream()
                 .min(Comparator.comparing(SchedulerEvent::getTime))
                 .get();
+        events.remove(event);
+        return event;
     }
 
     private void countTime(SchedulerEvent event) {
         queue.countTime(event.getTime());
         time = event.getTime();
-        if(event.getType().equals("ARRIVAL")) {
-            lastArrivalTime = event.getTime();
-        } else {
-            lastOutputTime = event.getTime();
-        }
     }
 }

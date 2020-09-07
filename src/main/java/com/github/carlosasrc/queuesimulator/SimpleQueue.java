@@ -4,31 +4,33 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.Arrays;
-
 @Data
 @Builder
 @AllArgsConstructor
 public class SimpleQueue {
-    private Integer clientsCount;
-    private Integer servers;
+    private int clientsCount;
+    private int servers;
     private Integer capacity;
     private Double[] states;
-    private Integer initialArrive;
-    private Integer finalArrive;
-    private Integer initialAttendance;
-    private Integer finalAttendance;
+    private int initialArrive;
+    private int finalArrive;
+    private int initialAttendance;
+    private int finalAttendance;
+    private int losses;
 
     public void increaseCount() {
-        clientsCount = clientsCount++;
+        clientsCount++;
     }
 
     public void decreaseCount() {
-        clientsCount = clientsCount--;
+        clientsCount--;
     }
 
     public void countTime(double eventTime) {
         states[clientsCount] = states[clientsCount] + eventTime;
     }
 
+    public void addLoss() {
+        losses++;
+    }
 }
