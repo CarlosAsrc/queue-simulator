@@ -10,14 +10,15 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 public class SimpleQueue implements Cloneable{
+    private int id;
     private int clientsCount;
     private int servers;
     private Integer capacity;
     private List<Double> states;
-    private int initialArrive;
-    private int finalArrive;
-    private int initialAttendance;
-    private int finalAttendance;
+    private int minArrivalFrequency;
+    private int maxArrivalFrequency;
+    private int minOutputFrequency;
+    private int maxOutputFrequency;
     private int losses;
 
     public void increaseCount() {

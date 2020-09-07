@@ -1,10 +1,6 @@
 package com.github.carlosasrc.queuesimulator;
 
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @NoArgsConstructor
@@ -27,17 +23,15 @@ public class MathUtil {
     }
 
 
-    public List<Double> getPercentages(SimpleQueue simpleQueue) {
-        List<Double> percentages = new ArrayList<>();
-        double totalTime = getTotalTime(simpleQueue);
-        for (Double state: simpleQueue.getStates()) {
-            percentages.add(state * 100D / totalTime);
+    public void getPercentages(FinalReport report) {
+        double totalTime = getTotalTime(report);
+        for (Double state: report.getStates()) {
+            report.getPercentages().add(state * 100D / totalTime);
         }
-        return percentages;
     }
 
-    public double getTotalTime(SimpleQueue simpleQueue) {
-        return simpleQueue
+    public double getTotalTime(FinalReport report) {
+        return report
                 .getStates()
                 .stream()
                 .reduce(Double::sum)

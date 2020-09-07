@@ -60,7 +60,7 @@ public class Simulation {
     private void scheduleArrival() {
         SchedulerEvent event = SchedulerEvent.builder()
                 .type("ARRIVAL")
-                .time(mathUtil.getNextRandomTime(queue.getInitialArrive(), queue.getFinalArrive()) + time)
+                .time(mathUtil.getNextRandomTime(queue.getMinArrivalFrequency(), queue.getMaxArrivalFrequency()) + time)
                 .build();
         events.add(event);
     }
@@ -68,7 +68,7 @@ public class Simulation {
     private void scheduleOutput() {
         SchedulerEvent event =SchedulerEvent.builder()
                 .type("OUTPUT")
-                .time(mathUtil.getNextRandomTime(queue.getInitialAttendance(), queue.getFinalAttendance()) + time)
+                .time(mathUtil.getNextRandomTime(queue.getMinOutputFrequency(), queue.getMaxOutputFrequency()) + time)
                 .build();
         events.add(event);
     }
