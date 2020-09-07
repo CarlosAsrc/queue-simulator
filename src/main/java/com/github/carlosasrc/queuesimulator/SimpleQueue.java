@@ -4,14 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
-public class SimpleQueue {
+public class SimpleQueue implements Cloneable{
     private int clientsCount;
     private int servers;
     private Integer capacity;
-    private Double[] states;
+    private List<Double> states;
     private int initialArrive;
     private int finalArrive;
     private int initialAttendance;
@@ -27,10 +29,22 @@ public class SimpleQueue {
     }
 
     public void countTime(double eventTime) {
-        states[clientsCount] = states[clientsCount] + eventTime;
+        states.set(clientsCount, states.get(clientsCount) + eventTime);
     }
 
     public void addLoss() {
         losses++;
+    }
+
+    public void reset() {
+        clientsCount = 0;
+        losses = 0;
+        for (Double state: states) {
+            state = 0D;
+        }
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

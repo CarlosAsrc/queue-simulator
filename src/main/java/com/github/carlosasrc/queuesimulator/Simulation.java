@@ -1,58 +1,38 @@
 package com.github.carlosasrc.queuesimulator;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
-@Component
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Simulator {
+public class Simulation {
 
-    private MathUtil mathUtil = new MathUtil();
-//    private final FileManager fileManager;
-
+    private final MathUtil mathUtil = new MathUtil();
     private double time;
     private List<SchedulerEvent> events;
     private SimpleQueue queue;
 
-//    @EventListener(ApplicationReadyEvent.class)
-    public void run() throws InterruptedException {
-        queue = SimpleQueue.builder()
-                .clientsCount(0)
-                .servers(1)
-                .capacity(5)
-                .initialArrive(2)
-                .finalArrive(4)
-                .states(new Double[]{0d, 0d, 0d, 0d, 0d, 0d})
-                .initialAttendance(3)
-                .finalAttendance(5)
-                .build();
-
-        events = new ArrayList<>();
-        SchedulerEvent event = SchedulerEvent.builder()
-                .time(3)
-                .type("ARRIVAL")
-                .build();
-        events.add(event);
-
-        executeEvent();
-
+    public Simulation(SimpleQueue queue, SchedulerEvent initialEvent) {
+        this.queue = queue;
+        this.events = new ArrayList<>();
+        events.add(initialEvent);
     }
 
-    private void executeEvent() throws InterruptedException {
+
+    public void run() {
         for (int i=1; i<=100000; i++) {
-            System.out.println(queue.toString());
             SchedulerEvent event = getNextEvent();
             if(event.getType().equals("ARRIVAL")) {
                 executeArrival(event);
             } else {
                 executeOutput(event);
             }
-
-            Thread.sleep(1000);
         }
     }
 
