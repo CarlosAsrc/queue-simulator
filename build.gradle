@@ -8,6 +8,17 @@ group = 'com.github.carlosasrc.queuesimulator'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Queue simulator',
+                'Implementation-Version': version,
+                'Main-Class': 'com.github.carlosasrc.queuesimulator.Main'
+    }
+    baseName = project.name
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -19,13 +30,8 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter'
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
 }
 
 test {

@@ -1,5 +1,8 @@
 package com.github.carlosasrc.queuesimulator;
 
+import com.github.carlosasrc.queuesimulator.model.ScheduledEvent;
+import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
+import com.github.carlosasrc.queuesimulator.util.MathUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,10 +18,10 @@ public class Simulation {
 
     private final MathUtil mathUtil = new MathUtil();
     private double time;
-    private List<SchedulerEvent> events;
+    private List<ScheduledEvent> events;
     private SimpleQueue queue;
 
-    public Simulation(SimpleQueue queue, SchedulerEvent initialEvent) {
+    public Simulation(SimpleQueue queue, ScheduledEvent initialEvent) {
         this.queue = queue;
         this.events = new ArrayList<>();
         events.add(initialEvent);
@@ -27,7 +30,7 @@ public class Simulation {
 
     public void run() {
         for (int i=1; i<=100000; i++) {
-            SchedulerEvent event = getNextEvent();
+            ScheduledEvent event = getNextEvent();
             if(event.getType().equals("ARRIVAL")) {
                 executeArrival(event);
             } else {
@@ -36,7 +39,7 @@ public class Simulation {
         }
     }
 
-    private void executeArrival(SchedulerEvent event) {
+    private void executeArrival(ScheduledEvent event) {
         countTime(event);
         if(queue.getClientsCount() < queue.getCapacity()) {
             queue.increaseCount();
@@ -49,7 +52,7 @@ public class Simulation {
         scheduleArrival();
     }
 
-    private void executeOutput(SchedulerEvent event) {
+    private void executeOutput(ScheduledEvent event) {
         countTime(event);
         queue.decreaseCount();
         if(queue.getClientsCount() >= queue.getServers()) {
@@ -58,7 +61,7 @@ public class Simulation {
     }
 
     private void scheduleArrival() {
-        SchedulerEvent event = SchedulerEvent.builder()
+        ScheduledEvent event = ScheduledEvent.builder()
                 .type("ARRIVAL")
                 .time(mathUtil.getNextRandomTime(queue.getMinArrivalFrequency(), queue.getMaxArrivalFrequency()) + time)
                 .build();
@@ -66,22 +69,22 @@ public class Simulation {
     }
 
     private void scheduleOutput() {
-        SchedulerEvent event =SchedulerEvent.builder()
+        ScheduledEvent event = ScheduledEvent.builder()
                 .type("OUTPUT")
                 .time(mathUtil.getNextRandomTime(queue.getMinOutputFrequency(), queue.getMaxOutputFrequency()) + time)
                 .build();
         events.add(event);
     }
 
-    private SchedulerEvent getNextEvent() {
-        SchedulerEvent event =  events.stream()
-                .min(Comparator.comparing(SchedulerEvent::getTime))
+    private ScheduledEvent getNextEvent() {
+        ScheduledEvent event =  events.stream()
+                .min(Comparator.comparing(ScheduledEvent::getTime))
                 .get();
         events.remove(event);
         return event;
     }
 
-    private void countTime(SchedulerEvent event) {
+    private void countTime(ScheduledEvent event) {
         queue.countTime(event.getTime());
         time = event.getTime();
     }

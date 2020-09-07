@@ -1,5 +1,9 @@
 package com.github.carlosasrc.queuesimulator;
 
+import com.github.carlosasrc.queuesimulator.model.FinalReport;
+import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
+import com.github.carlosasrc.queuesimulator.util.MathUtil;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

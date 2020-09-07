@@ -1,5 +1,6 @@
-package com.github.carlosasrc.queuesimulator;
+package com.github.carlosasrc.queuesimulator.io;
 
+import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
 import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;

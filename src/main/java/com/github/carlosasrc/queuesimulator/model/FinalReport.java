@@ -1,4 +1,4 @@
-package com.github.carlosasrc.queuesimulator;
+package com.github.carlosasrc.queuesimulator.model;
 
 import lombok.Builder;
 import lombok.Data;

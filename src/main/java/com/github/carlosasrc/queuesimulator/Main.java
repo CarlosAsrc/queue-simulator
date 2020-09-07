@@ -1,5 +1,9 @@
 package com.github.carlosasrc.queuesimulator;
 
+import com.github.carlosasrc.queuesimulator.io.InputManager;
+import com.github.carlosasrc.queuesimulator.model.ScheduledEvent;
+import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +24,7 @@ public class Main {
                     (SimpleQueue) queue.clone(),
                     (SimpleQueue) queue.clone());
 
-            SchedulerEvent firstEvent = SchedulerEvent.builder()
+            ScheduledEvent firstEvent = ScheduledEvent.builder()
                     .time(3)
                     .type("ARRIVAL")
                     .build();
@@ -31,7 +35,6 @@ public class Main {
                 simulation.run();
                 simulations.add(simulation);
             }
-
 
             System.out.println(reportService.generateReport(simulations));
         }

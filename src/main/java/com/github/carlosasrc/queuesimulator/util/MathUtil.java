@@ -1,5 +1,6 @@
-package com.github.carlosasrc.queuesimulator;
+package com.github.carlosasrc.queuesimulator.util;
 
+import com.github.carlosasrc.queuesimulator.model.FinalReport;
 import lombok.NoArgsConstructor;
 
 
@@ -9,7 +10,6 @@ public class MathUtil {
     private final long A = 25214903917L;
     private final long M = (long) Math.pow(2D, 48D);
     private final long C = 11L;
-
     private double seed = System.currentTimeMillis();
 
 
