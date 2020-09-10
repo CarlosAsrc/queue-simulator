@@ -1,14 +1,13 @@
 package com.github.carlosasrc.queuesimulator.io;
 
 import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
-import lombok.AllArgsConstructor;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class InputManager {
     public ArrayList<SimpleQueue> getInputData() throws IOException {
@@ -23,16 +22,18 @@ public class InputManager {
         while (line != null) {
             String[] regex = line.split(" ");
 
+            int capacity = Integer.parseInt(regex[1]);
+
             SimpleQueue simpleQueue = SimpleQueue.builder()
                     .id(id)
                     .clientsCount(0)
                     .servers(Integer.parseInt(regex[0]))
-                    .capacity(Integer.parseInt(regex[1]))
+                    .capacity(capacity)
                     .minArrivalFrequency(Integer.parseInt(regex[2]))
                     .maxArrivalFrequency(Integer.parseInt(regex[3]))
                     .minOutputFrequency(Integer.parseInt(regex[4]))
                     .maxOutputFrequency(Integer.parseInt(regex[5]))
-                    .states(Arrays.asList(0d, 0d, 0d, 0d, 0d, 0d))
+                    .states(new ArrayList<>(Collections.nCopies(capacity + 1, 0d)))
                     .build();
 
             queueList.add(simpleQueue);
