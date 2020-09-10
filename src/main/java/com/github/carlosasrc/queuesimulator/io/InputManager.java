@@ -6,14 +6,13 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class InputManager {
-    public ArrayList<SimpleQueue> getInputData() throws IOException {
+    public ArrayList<SimpleQueue> getInputData(String fileName) throws IOException {
         ArrayList<SimpleQueue> queueList = new ArrayList<>();
 
-        BufferedReader reader = new BufferedReader(new FileReader("example.txt"));
+        BufferedReader reader = new BufferedReader(new FileReader(fileName));
 
         String line = reader.readLine();
 

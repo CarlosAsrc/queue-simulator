@@ -7,14 +7,25 @@ import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws CloneNotSupportedException, IOException {
+        if (args.length != 1) {
+            System.out.println("Número inválido de parâmetros!\nUso: java -jar queue-simulator.jar <nome-arquivo>");
+            return;
+        }
         ReportService reportService = new ReportService();
         InputManager inputManager = new InputManager();
+        List<SimpleQueue> queues;
+        try {
+            queues = inputManager.getInputData(args[0]);
+        } catch (Exception e) {
+            System.out.printf("Arquivo %s não encontrado na raíz do projeto!%n", args[0]);
+            return;
+        }
 
-        List<SimpleQueue> queues = inputManager.getInputData();
 
         for (SimpleQueue queue: queues) {
             List<Simulation> simulations = new ArrayList<>();
