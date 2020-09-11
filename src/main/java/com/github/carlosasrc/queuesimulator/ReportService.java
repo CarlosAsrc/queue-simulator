@@ -20,7 +20,7 @@ public class ReportService {
                String.format("\nRESULTADO DA MÉDIA DE 5 EXECUÇÕES PARA A FILA %s:", finalReport.getQueueId()) +
                "\nServidores: " + finalReport.getServers() +
                "\nCapacidade: " + finalReport.getCapacity() +
-               String.format("\nTempo Médio Total: %.4f", mathUtil.getTotalTime(finalReport))+
+               String.format("\nTempo Médio Total: %.4f", finalReport.getAverageTime())+
                getStatesReport(finalReport.getStates(), finalReport.getPercentages())+
                "\nPERDAS=" + finalReport.getLosses();
     }

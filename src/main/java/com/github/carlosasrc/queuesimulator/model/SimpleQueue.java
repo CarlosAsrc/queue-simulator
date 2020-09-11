@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -40,9 +42,7 @@ public class SimpleQueue implements Cloneable{
     public void reset() {
         clientsCount = 0;
         losses = 0;
-        for (Double state: states) {
-            state = 0D;
-        }
+        states = new ArrayList<>(Collections.nCopies(capacity + 1, 0d));
     }
 
     public Object clone() throws CloneNotSupportedException {

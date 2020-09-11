@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MathUtil {
 
-    private final long A = 25214903917L;
-    private final long M = (long) Math.pow(2D, 48D);
+    private final long A = 25212203917L;
+    private final long M = (long) Math.pow(2D, 32D);
     private final long C = 11L;
     private double seed = System.currentTimeMillis();
 
@@ -19,6 +19,7 @@ public class MathUtil {
 
     public double getRandomNumber() {
         seed = (A * seed + C) % M;
+//        System.out.println("T: "+seed/M);
         return seed / M;
     }
 
@@ -26,7 +27,7 @@ public class MathUtil {
     public void getPercentages(FinalReport report) {
         double totalTime = getTotalTime(report);
         for (Double state: report.getStates()) {
-            report.getPercentages().add(state * 100D / totalTime);
+            report.getPercentages().add(state * 100D / report.getAverageTime());
         }
     }
 

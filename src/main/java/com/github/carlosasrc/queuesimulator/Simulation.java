@@ -85,7 +85,7 @@ public class Simulation {
     }
 
     private void countTime(ScheduledEvent event) {
-        queue.countTime(event.getTime());
+        queue.countTime(event.getTime() - time);
         time = event.getTime();
     }
 }
