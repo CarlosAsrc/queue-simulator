@@ -1,5 +1,6 @@
 package com.github.carlosasrc.queuesimulator.io;
 
+import com.github.carlosasrc.queuesimulator.model.Route;
 import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
 
 import java.io.BufferedReader;
@@ -26,6 +27,7 @@ public class InputManager {
             SimpleQueue simpleQueue = SimpleQueue.builder()
                     .id(id)
                     .clientsCount(0)
+                    .routes(new ArrayList<>())
                     .servers(Integer.parseInt(regex[0]))
                     .capacity(capacity)
                     .minArrivalFrequency(Integer.parseInt(regex[2]))
@@ -41,6 +43,42 @@ public class InputManager {
             line = reader.readLine();
         }
         reader.close();
+        return queueList;
+    }
+
+
+    public ArrayList<SimpleQueue> getMock() {
+        ArrayList<SimpleQueue> queueList = new ArrayList<>();
+
+        SimpleQueue queue1 = SimpleQueue.builder()
+                .id(1)
+                .clientsCount(0)
+                .routes(Collections.singletonList(Route.builder().id(2).probability(1).build()))
+                .servers(2)
+                .capacity(3)
+                .minArrivalFrequency(2)
+                .maxArrivalFrequency(3)
+                .minOutputFrequency(2)
+                .maxOutputFrequency(5)
+                .states(new ArrayList<>(Collections.nCopies(3 + 1, 0d)))
+                .build();
+
+        SimpleQueue queue2 = SimpleQueue.builder()
+                .id(2)
+                .clientsCount(0)
+                .routes(new ArrayList<>())
+                .servers(1)
+                .capacity(3)
+                .minArrivalFrequency(0)
+                .maxArrivalFrequency(0)
+                .minOutputFrequency(3)
+                .maxOutputFrequency(5)
+                .states(new ArrayList<>(Collections.nCopies(3 + 1, 0d)))
+                .build();
+
+        queueList.add(queue1);
+        queueList.add(queue2);
+
         return queueList;
     }
 }

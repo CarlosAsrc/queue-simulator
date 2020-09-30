@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @AllArgsConstructor
@@ -19,10 +20,10 @@ public class Simulation {
     private final MathUtil mathUtil = new MathUtil();
     private double time;
     private List<ScheduledEvent> events;
-    private SimpleQueue queue;
+    private List<SimpleQueue> queues;
 
-    public Simulation(SimpleQueue queue, ScheduledEvent initialEvent) {
-        this.queue = queue;
+    public Simulation(List<SimpleQueue> queues, ScheduledEvent initialEvent) {
+        this.queues = queues;
         this.events = new ArrayList<>();
         events.add(initialEvent);
     }
@@ -40,41 +41,94 @@ public class Simulation {
     }
 
     private void executeArrival(ScheduledEvent event) {
+        SimpleQueue queue = getQueueById(event.getQueueId());
+
         countTime(event);
         if(queue.getClientsCount() < queue.getCapacity()) {
             queue.increaseCount();
             if(queue.getClientsCount() <= queue.getServers()) {
-                scheduleOutput();
+                scheduleOutput(queue.getId());
             }
         } else {
             queue.addLoss();
         }
-        scheduleArrival();
+        scheduleArrival(queue.getId());
     }
 
     private void executeOutput(ScheduledEvent event) {
+        SimpleQueue originQueue = getQueueById(event.getQueueId());
+
         countTime(event);
-        queue.decreaseCount();
-        if(queue.getClientsCount() >= queue.getServers()) {
-            scheduleOutput();
+        originQueue.decreaseCount();
+        if(originQueue.getClientsCount() >= originQueue.getServers()) {
+            scheduleOutput(originQueue.getId());
+        }
+
+
+        //SE PUSSUI FILA DE ROTEAMENTO:
+        Optional<SimpleQueue> destinyQueueOptional = getRoutingQueue(originQueue);
+        if(destinyQueueOptional.isPresent()) {
+            SimpleQueue destinyQueue = destinyQueueOptional.get();
+            if(destinyQueue.getClientsCount() < destinyQueue.getCapacity()) {
+                destinyQueue.increaseCount();
+                if(destinyQueue.getClientsCount() <= destinyQueue.getServers()) {
+                    scheduleOutput(destinyQueue.getId());
+                }
+            } else {
+                destinyQueue.addLoss();
+            }
         }
     }
 
-    private void scheduleArrival() {
+
+//    private void executeRouting(ScheduledEvent event) {
+//        SimpleQueue originQueue = getQueueById(event.getQueueId());
+//        SimpleQueue destinyQueue = getQueueById(originQueue.getMoreLikelyRoutingQueue());
+//
+//        executeOutput(event);
+//
+//        if(destinyQueue.getClientsCount() < destinyQueue.getCapacity()) {
+//            destinyQueue.increaseCount();
+//            if(destinyQueue.getClientsCount() <= destinyQueue.getServers()) {
+//                scheduleOutput(destinyQueue.getId());
+//            }
+//        } else {
+//            destinyQueue.addLoss();
+//        }
+//    }
+
+    private void scheduleArrival(int queueId) {
+        SimpleQueue queue = getQueueById(queueId);
         ScheduledEvent event = ScheduledEvent.builder()
                 .type("ARRIVAL")
+                .queueId(queueId)
                 .time(mathUtil.getNextRandomTime(queue.getMinArrivalFrequency(), queue.getMaxArrivalFrequency()) + time)
                 .build();
         events.add(event);
     }
 
-    private void scheduleOutput() {
+
+    private void scheduleOutput(int queueId) {
+        SimpleQueue queue = getQueueById(queueId);
         ScheduledEvent event = ScheduledEvent.builder()
                 .type("OUTPUT")
+                .queueId(queueId)
                 .time(mathUtil.getNextRandomTime(queue.getMinOutputFrequency(), queue.getMaxOutputFrequency()) + time)
                 .build();
         events.add(event);
     }
+
+
+//    private void scheduleRouting(int queueId) {
+//        SimpleQueue queue = getQueueById(queueId);
+//        ScheduledEvent event = ScheduledEvent.builder()
+//                .type("ROUTING")
+//                .time(mathUtil.getNextRandomTime(queue.getMinOutputFrequency(), queue.getMaxOutputFrequency()) + time)
+//                .build();
+//        events.add(event);
+//    }
+
+
 
     private ScheduledEvent getNextEvent() {
         ScheduledEvent event =  events.stream()
@@ -85,7 +139,20 @@ public class Simulation {
     }
 
     private void countTime(ScheduledEvent event) {
-        queue.countTime(event.getTime() - time);
+        queues.forEach(queue -> queue.countTime(event.getTime() - time));
         time = event.getTime();
+    }
+
+
+    private SimpleQueue getQueueById(int queueId) {
+        return queues.stream()
+                .filter(queue -> queue.getId() == queueId)
+                .findFirst()
+                .get();
+    }
+
+    private Optional<SimpleQueue> getRoutingQueue(SimpleQueue originQueue) {
+        Optional<Integer> routingQueueId = originQueue.getMoreLikelyRoutingQueue();
+        return routingQueueId.map(this::getQueueById);
     }
 }

@@ -7,16 +7,18 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @Builder
 @AllArgsConstructor
-public class SimpleQueue implements Cloneable{
+public class SimpleQueue implements Cloneable {
     private int id;
     private int clientsCount;
     private int servers;
     private Integer capacity;
     private List<Double> states;
+    private List<Route> routes;
     private int minArrivalFrequency;
     private int maxArrivalFrequency;
     private int minOutputFrequency;
@@ -47,5 +49,10 @@ public class SimpleQueue implements Cloneable{
 
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    public Optional<Integer> getMoreLikelyRoutingQueue() {
+        if (routes.isEmpty()) return Optional.empty();
+        return Optional.of(routes.get(0).getId());
     }
 }

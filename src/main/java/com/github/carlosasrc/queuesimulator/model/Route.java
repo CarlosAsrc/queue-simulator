@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
+
 @Data
 @Builder
 @AllArgsConstructor
-public class ScheduledEvent {
-    private int queueId;
-    private String type;
-    private double time;
+public class Route {
+    private int id;
+    private double probability;
 }
