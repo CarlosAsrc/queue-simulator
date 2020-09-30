@@ -81,22 +81,6 @@ public class Simulation {
     }
 
 
-//    private void executeRouting(ScheduledEvent event) {
-//        SimpleQueue originQueue = getQueueById(event.getQueueId());
-//        SimpleQueue destinyQueue = getQueueById(originQueue.getMoreLikelyRoutingQueue());
-//
-//        executeOutput(event);
-//
-//        if(destinyQueue.getClientsCount() < destinyQueue.getCapacity()) {
-//            destinyQueue.increaseCount();
-//            if(destinyQueue.getClientsCount() <= destinyQueue.getServers()) {
-//                scheduleOutput(destinyQueue.getId());
-//            }
-//        } else {
-//            destinyQueue.addLoss();
-//        }
-//    }
-
     private void scheduleArrival(int queueId) {
         SimpleQueue queue = getQueueById(queueId);
         ScheduledEvent event = ScheduledEvent.builder()
@@ -118,15 +102,6 @@ public class Simulation {
         events.add(event);
     }
 
-
-//    private void scheduleRouting(int queueId) {
-//        SimpleQueue queue = getQueueById(queueId);
-//        ScheduledEvent event = ScheduledEvent.builder()
-//                .type("ROUTING")
-//                .time(mathUtil.getNextRandomTime(queue.getMinOutputFrequency(), queue.getMaxOutputFrequency()) + time)
-//                .build();
-//        events.add(event);
-//    }
 
 
 
