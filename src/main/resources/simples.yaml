@@ -1,0 +1,7 @@
+  - id: 1
+    servers: 1
+    capacity: 5
+    minArrivalFrequency: 2.0
+    maxArrivalFrequency: 4.0
+    minOutputFrequency: 3.0
+    maxOutputFrequency: 5.0

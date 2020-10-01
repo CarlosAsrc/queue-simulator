@@ -3,6 +3,7 @@ package com.github.carlosasrc.queuesimulator.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.Optional;
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class SimpleQueue implements Cloneable {
     private int id;
     private int clientsCount;
@@ -24,6 +26,7 @@ public class SimpleQueue implements Cloneable {
     private int minOutputFrequency;
     private int maxOutputFrequency;
     private int losses;
+
 
     public void increaseCount() {
         clientsCount++;

@@ -22,10 +22,10 @@ public class Main {
 
         List<SimpleQueue> queues;
         try {
-//            queues = inputManager.getInputData(args[0]);
-            queues = inputManager.getMock();
+            queues = inputManager.getInputData(args[0]);
         } catch (Exception e) {
             System.out.printf("Arquivo %s não encontrado na raíz do projeto!%n", args[0]);
+            e.printStackTrace();
             return;
         }
 

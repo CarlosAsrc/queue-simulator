@@ -32,6 +32,8 @@ repositories {
 dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.2'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.11.2'
 }
 
 test {
