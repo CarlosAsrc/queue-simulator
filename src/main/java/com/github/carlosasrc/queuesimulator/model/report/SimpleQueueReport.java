@@ -21,6 +21,8 @@ public class SimpleQueueReport {
     public String getStringReport() {
         String report = "";
         String line = "";
+
+        report = report.concat("\nFILA: "+queueId);
         for (int i=0; i<states.size(); i++) {
             line = String.format("\n%s clientes na fila -->  TEMPO: %.4f", i, states.get(i));
             report = report.concat(line);

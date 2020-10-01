@@ -15,7 +15,7 @@ import java.util.Optional;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Simulation {
+public class Simulation implements Cloneable {
 
     private final MathUtil mathUtil = new MathUtil();
     private double time;
@@ -26,6 +26,10 @@ public class Simulation {
         this.queues = queues;
         this.events = new ArrayList<>();
         events.add(initialEvent);
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 
 

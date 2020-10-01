@@ -27,7 +27,7 @@ public class ReportService {
     }
 
     private SimpleQueueReport integrateSimpleSimulations(List<Simulation> simulations) {
-        double averageTime = (simulations.stream().mapToDouble(Simulation::getTime).sum()) / 5.0;
+        double averageTime = (simulations.stream().mapToDouble(Simulation::getTime).sum()) / simulations.size();
         List<Double> averageStates = new ArrayList<>();
 
         List<SimpleQueue> queues = simulations.stream()
@@ -46,7 +46,7 @@ public class ReportService {
                     .orElse(0D) / capacity;
             averageStates.add(averageState);
         }
-        int averageLoss = (queues.stream().mapToInt(SimpleQueue::getLosses).sum()) / 5;
+        int averageLoss = (queues.stream().mapToInt(SimpleQueue::getLosses).sum()) / simulations.size();
 
         return SimpleQueueReport.builder()
                 .queueId(queueId)
@@ -81,7 +81,7 @@ public class ReportService {
         StringBuilder stringBuilder = new StringBuilder();
         TandemReport tandemReport = integrateTandemSimulations(simulations);
 
-        stringBuilder.append("\n Tempo total de simulação: ").append(tandemReport.getAverageTime());
+        stringBuilder.append("\nTempo total de simulação: ").append(tandemReport.getAverageTime());
 
         for (SimpleQueueReport simpleQueueReport: tandemReport.getQueueReports()) {
             stringBuilder.append(simpleQueueReport.getStringReport());
@@ -92,26 +92,47 @@ public class ReportService {
     }
 
     private TandemReport integrateTandemSimulations(List<Simulation> simulations) {
-        Simulation simulation = simulations.get(0);
-        List<SimpleQueueReport> queuesReports = new ArrayList<>();
+        List<TandemReport> reports = new ArrayList<>();
 
-        for (SimpleQueue simpleQueue: simulation.getQueues()) {
-            SimpleQueueReport simpleQueueReport =  SimpleQueueReport.builder()
-                    .queueId(simpleQueue.getId())
+        for (Simulation simulation: simulations) {
+            List<SimpleQueueReport> queuesReports = new ArrayList<>();
+
+            for (SimpleQueue simpleQueue: simulation.getQueues()) {
+                SimpleQueueReport simpleQueueReport =  SimpleQueueReport.builder()
+                        .queueId(simpleQueue.getId())
+                        .averageTime(simulation.getTime())
+                        .losses(simpleQueue.getLosses())
+                        .states(simpleQueue.getStates())
+                        .capacity(simpleQueue.getCapacity())
+                        .servers(simpleQueue.getServers())
+                        .percentages(new ArrayList<>())
+                        .build();
+                mathUtil.getPercentages(simpleQueueReport);
+                queuesReports.add(simpleQueueReport);
+            }
+
+            TandemReport tandemReport = TandemReport.builder()
                     .averageTime(simulation.getTime())
-                    .losses(simpleQueue.getLosses())
-                    .states(simpleQueue.getStates())
-                    .capacity(simpleQueue.getCapacity())
-                    .servers(simpleQueue.getServers())
-                    .percentages(new ArrayList<>())
+                    .queueReports(queuesReports)
                     .build();
-            mathUtil.getPercentages(simpleQueueReport);
-            queuesReports.add(simpleQueueReport);
+            reports.add(tandemReport);
         }
 
+//        return integrateTandemReports(reports);
+        return reports.get(0);
+    }
+
+
+    private TandemReport integrateTandemReports(List<TandemReport> reports) {
+        double averageTime = (reports.stream().mapToDouble(TandemReport::getAverageTime).sum()) / reports.size();
+
+        List<SimpleQueueReport> averageQueueReports = new ArrayList<>();
+
+
+
         return TandemReport.builder()
-                .averageTime(simulation.getTime())
-                .queueReports(queuesReports)
+                .averageTime(averageTime)
+                .queueReports(averageQueueReports)
                 .build();
     }
 }

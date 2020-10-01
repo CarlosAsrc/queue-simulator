@@ -10,12 +10,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class InputManager {
 
     public List<SimpleQueue> getInputData(String fileName) throws IOException {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        File file = new File(classLoader.getResource(fileName).getFile());
+        File file = new File(Objects.requireNonNull(classLoader.getResource(fileName)).getFile());
 
         ObjectMapper om = new ObjectMapper(new YAMLFactory());
 
@@ -26,7 +27,6 @@ public class InputManager {
                 if (simpleQueue.getRoutes() == null) simpleQueue.setRoutes(new ArrayList<>());
         });
 
-        queues.forEach(System.out::println);
         return queues;
     }
 }
