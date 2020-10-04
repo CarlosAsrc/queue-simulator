@@ -75,8 +75,6 @@ public class ReportService {
         return String.join("", Collections.nCopies(60 - size, " "));
     }
 
-
-
     public String generateTandemReport(List<Simulation> simulations) {
         StringBuilder stringBuilder = new StringBuilder();
         TandemReport tandemReport = integrateTandemSimulations(simulations);
@@ -122,13 +120,10 @@ public class ReportService {
         return reports.get(0);
     }
 
-
     private TandemReport integrateTandemReports(List<TandemReport> reports) {
         double averageTime = (reports.stream().mapToDouble(TandemReport::getAverageTime).sum()) / reports.size();
 
         List<SimpleQueueReport> averageQueueReports = new ArrayList<>();
-
-
 
         return TandemReport.builder()
                 .averageTime(averageTime)

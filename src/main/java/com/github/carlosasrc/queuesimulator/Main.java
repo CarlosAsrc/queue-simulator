@@ -5,7 +5,6 @@ import com.github.carlosasrc.queuesimulator.model.ScheduledEvent;
 import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,6 +20,7 @@ public class Main {
         }
 
         List<SimpleQueue> queues;
+
         try {
             queues = inputManager.getInputData(args[0]);
         } catch (Exception e) {
@@ -52,12 +52,7 @@ public class Main {
 
     private static void simpleSimulation(SimpleQueue queue) throws CloneNotSupportedException {
         List<Simulation> simulations = new ArrayList<>();
-        List<SimpleQueue> queueClonesToSimulations = Arrays.asList(
-                (SimpleQueue) queue.clone(),
-                (SimpleQueue) queue.clone(),
-                (SimpleQueue) queue.clone(),
-                (SimpleQueue) queue.clone(),
-                (SimpleQueue) queue.clone());
+        List<SimpleQueue> queueClonesToSimulations = Collections.nCopies(5, (SimpleQueue) queue.clone());
 
         ScheduledEvent firstEvent = ScheduledEvent.builder()
                 .time(3.0)
@@ -65,12 +60,12 @@ public class Main {
                 .type("ARRIVAL")
                 .build();
 
-        for(int i=0; i<5; i++) {
-            queueClonesToSimulations.get(i).reset();
-            Simulation simulation = new Simulation(Collections.singletonList(queueClonesToSimulations.get(i)), firstEvent);
+        queueClonesToSimulations.forEach(simpleQueue -> {
+            simpleQueue.reset();
+            Simulation simulation = new Simulation(Collections.singletonList(simpleQueue), firstEvent);
             simulation.run();
             simulations.add(simulation);
-        }
+        });
 
         System.out.println(reportService.generateSimpleReport(simulations));
     }

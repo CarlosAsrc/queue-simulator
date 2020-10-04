@@ -32,7 +32,6 @@ public class Simulation implements Cloneable {
         return super.clone();
     }
 
-
     public void run() {
         for (int i=1; i<=100000; i++) {
             ScheduledEvent event = getNextEvent();
@@ -68,7 +67,6 @@ public class Simulation implements Cloneable {
             scheduleOutput(originQueue.getId());
         }
 
-
         //SE PUSSUI FILA DE ROTEAMENTO:
         Optional<SimpleQueue> destinyQueueOptional = getRoutingQueue(originQueue);
         if(destinyQueueOptional.isPresent()) {
@@ -84,7 +82,6 @@ public class Simulation implements Cloneable {
         }
     }
 
-
     private void scheduleArrival(int queueId) {
         SimpleQueue queue = getQueueById(queueId);
         ScheduledEvent event = ScheduledEvent.builder()
@@ -95,7 +92,6 @@ public class Simulation implements Cloneable {
         events.add(event);
     }
 
-
     private void scheduleOutput(int queueId) {
         SimpleQueue queue = getQueueById(queueId);
         ScheduledEvent event = ScheduledEvent.builder()
@@ -105,9 +101,6 @@ public class Simulation implements Cloneable {
                 .build();
         events.add(event);
     }
-
-
-
 
     private ScheduledEvent getNextEvent() {
         ScheduledEvent event =  events.stream()
