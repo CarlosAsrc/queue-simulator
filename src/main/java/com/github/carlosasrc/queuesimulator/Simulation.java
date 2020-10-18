@@ -34,7 +34,7 @@ public class Simulation implements Cloneable {
 
 
     public void run() {
-        for (int i=1; i<=100000; i++) {
+        while (mathUtil.getRandomGenerated() <= 100000) {
             ScheduledEvent event = getNextEvent();
             if(event.getType().equals("ARRIVAL")) {
                 executeArrival(event);
@@ -131,7 +131,16 @@ public class Simulation implements Cloneable {
     }
 
     private Optional<SimpleQueue> getRoutingQueue(SimpleQueue originQueue) {
-        Optional<Integer> routingQueueId = originQueue.getMoreLikelyRoutingQueue();
+        if (originQueue.getRoutes().size() == 0)
+            return Optional.empty();
+
+        Optional<Integer> routingQueueId;
+
+        if(originQueue.getRoutes().size() == 1 && originQueue.getRoutes().get(0).getProbability() == 1.0) {
+            routingQueueId = originQueue.getMoreLikelyRoutingQueue(1.0);
+        } else {
+            routingQueueId = originQueue.getMoreLikelyRoutingQueue(mathUtil.getNextRandomTime(0, 1));
+        }
         return routingQueueId.map(this::getQueueById);
     }
 }

@@ -1,0 +1,32 @@
+  - id: 1
+    servers: 1
+    minArrivalFrequency: 1.0
+    maxArrivalFrequency: 4.0
+    minOutputFrequency: 1.0
+    maxOutputFrequency: 1.5
+    routes:
+      - id: 2
+        probability: 0.8
+      - id: 3
+        probability: 0.2
+
+  - id: 2
+    servers: 3
+    capacity: 5
+    minOutputFrequency: 5.0
+    maxOutputFrequency: 10.0
+    routes:
+        - id: 1
+          probability: 0.3
+        - id: 3
+          probability: 0.5
+
+
+  - id: 3
+    servers: 2
+    capacity: 8
+    minOutputFrequency: 10.0
+    maxOutputFrequency: 20.0
+    routes:
+        - id: 2
+          probability: 0.7

@@ -24,7 +24,7 @@ public class Main {
         try {
             queues = inputManager.getInputData(args[0]);
         } catch (Exception e) {
-            System.out.printf("Arquivo %s não encontrado na raíz do projeto!%n", args[0]);
+            System.out.printf("Erro ao ler arquivo %s%n", args[0]);
             e.printStackTrace();
             return;
         }
@@ -32,14 +32,14 @@ public class Main {
         if (queues.size() == 1){
             simpleSimulation(queues.get(0));
         } else {
-            tandemSimulation(queues);
+            networkSimulation(queues);
         }
     }
 
-    private static void tandemSimulation(List<SimpleQueue> queues) {
+    private static void networkSimulation(List<SimpleQueue> queues) {
         ScheduledEvent firstEvent = ScheduledEvent.builder()
                 .queueId(1)
-                .time(2.5)
+                .time(1.0)
                 .type("ARRIVAL")
                 .build();
 

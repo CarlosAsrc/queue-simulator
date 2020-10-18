@@ -3,13 +3,14 @@ package com.github.carlosasrc.queuesimulator.io;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.github.carlosasrc.queuesimulator.model.Route;
+import com.github.carlosasrc.queuesimulator.model.ScheduledEvent;
 import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InputManager {
 
@@ -21,8 +22,15 @@ public class InputManager {
         List<SimpleQueue> queues = om.readValue(file, new TypeReference<List<SimpleQueue>>(){});
 
         queues.forEach(simpleQueue -> {
-                simpleQueue.setStates(new ArrayList<>(Collections.nCopies(simpleQueue.getCapacity() + 1, 0d)));
-                if (simpleQueue.getRoutes() == null) simpleQueue.setRoutes(new ArrayList<>());
+                simpleQueue.setCapacity(Objects.isNull(simpleQueue.getCapacity()) ? 1000 : simpleQueue.getCapacity());
+                if (simpleQueue.getRoutes() == null) {
+                    simpleQueue.setRoutes(new ArrayList<>());
+                } else {
+                    List<Route> routes =  simpleQueue.getRoutes().stream()
+                            .sorted(Comparator.comparing(Route::getProbability))
+                            .collect(Collectors.toList());
+                    simpleQueue.setRoutes(routes);
+                }
         });
 
         return queues;

@@ -5,10 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 @Builder
@@ -37,6 +34,14 @@ public class SimpleQueue implements Cloneable {
     }
 
     public void countTime(double eventTime) {
+        if (Objects.isNull(states)) {
+            states = new ArrayList<>();
+        }
+        if(states.size() == 0 || states.size() <= clientsCount) {
+            for(int i=states.size(); i <= clientsCount; i++) {
+                states.add(0d);
+            }
+        }
         states.set(clientsCount, states.get(clientsCount) + eventTime);
     }
 
@@ -54,8 +59,10 @@ public class SimpleQueue implements Cloneable {
         return super.clone();
     }
 
-    public Optional<Integer> getMoreLikelyRoutingQueue() {
-        if (routes.isEmpty()) return Optional.empty();
-        return Optional.of(routes.get(0).getId());
+    public Optional<Integer> getMoreLikelyRoutingQueue(double probability) {
+        for (Route route: routes) {
+            if (probability <= route.getProbability()) return Optional.of(route.getId());
+        }
+        return Optional.empty();
     }
 }
