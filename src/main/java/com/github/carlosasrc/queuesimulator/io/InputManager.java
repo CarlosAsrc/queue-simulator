@@ -1,46 +1,38 @@
 package com.github.carlosasrc.queuesimulator.io;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.github.carlosasrc.queuesimulator.model.Route;
+import com.github.carlosasrc.queuesimulator.model.ScheduledEvent;
 import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class InputManager {
-    public ArrayList<SimpleQueue> getInputData(String fileName) throws IOException {
-        ArrayList<SimpleQueue> queueList = new ArrayList<>();
 
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+    public List<SimpleQueue> getInputData(String fileName) throws IOException {
+        File file = new File(fileName);
 
-        String line = reader.readLine();
+        ObjectMapper om = new ObjectMapper(new YAMLFactory());
 
-        int id = 0;
+        List<SimpleQueue> queues = om.readValue(file, new TypeReference<List<SimpleQueue>>(){});
 
-        while (line != null) {
-            String[] regex = line.split(" ");
+        queues.forEach(simpleQueue -> {
+                simpleQueue.setCapacity(Objects.isNull(simpleQueue.getCapacity()) ? 1000 : simpleQueue.getCapacity());
+                if (simpleQueue.getRoutes() == null) {
+                    simpleQueue.setRoutes(new ArrayList<>());
+                } else {
+                    List<Route> routes =  simpleQueue.getRoutes().stream()
+                            .sorted(Comparator.comparing(Route::getProbability))
+                            .collect(Collectors.toList());
+                    simpleQueue.setRoutes(routes);
+                }
+        });
 
-            int capacity = Integer.parseInt(regex[1]);
-
-            SimpleQueue simpleQueue = SimpleQueue.builder()
-                    .id(id)
-                    .clientsCount(0)
-                    .servers(Integer.parseInt(regex[0]))
-                    .capacity(capacity)
-                    .minArrivalFrequency(Integer.parseInt(regex[2]))
-                    .maxArrivalFrequency(Integer.parseInt(regex[3]))
-                    .minOutputFrequency(Integer.parseInt(regex[4]))
-                    .maxOutputFrequency(Integer.parseInt(regex[5]))
-                    .states(new ArrayList<>(Collections.nCopies(capacity + 1, 0d)))
-                    .build();
-
-            queueList.add(simpleQueue);
-
-            id++;
-            line = reader.readLine();
-        }
-        reader.close();
-        return queueList;
+        return queues;
     }
 }

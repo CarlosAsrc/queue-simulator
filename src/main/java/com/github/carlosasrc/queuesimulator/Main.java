@@ -4,50 +4,74 @@ import com.github.carlosasrc.queuesimulator.io.InputManager;
 import com.github.carlosasrc.queuesimulator.model.ScheduledEvent;
 import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws CloneNotSupportedException, IOException {
+
+    private static final ReportService reportService = new ReportService();
+    private static final InputManager inputManager = new InputManager();
+
+    public static void main(String[] args) throws CloneNotSupportedException {
         if (args.length != 1) {
             System.out.println("Número inválido de parâmetros!\nUso: java -jar queue-simulator.jar <nome-arquivo>");
             return;
         }
-        ReportService reportService = new ReportService();
-        InputManager inputManager = new InputManager();
+
         List<SimpleQueue> queues;
         try {
             queues = inputManager.getInputData(args[0]);
         } catch (Exception e) {
-            System.out.printf("Arquivo %s não encontrado na raíz do projeto!%n", args[0]);
+            System.out.printf("Erro ao ler arquivo %s%n", args[0]);
+            e.printStackTrace();
             return;
         }
 
-
-        for (SimpleQueue queue: queues) {
-            List<Simulation> simulations = new ArrayList<>();
-            List<SimpleQueue> queueClonesToSimulations = Arrays.asList(
-                    (SimpleQueue) queue.clone(),
-                    (SimpleQueue) queue.clone(),
-                    (SimpleQueue) queue.clone(),
-                    (SimpleQueue) queue.clone(),
-                    (SimpleQueue) queue.clone());
-
-            ScheduledEvent firstEvent = ScheduledEvent.builder()
-                    .time(3)
-                    .type("ARRIVAL")
-                    .build();
-
-            for(int i=0; i<5; i++) {
-                queueClonesToSimulations.get(i).reset();
-                Simulation simulation = new Simulation(queueClonesToSimulations.get(i), firstEvent);
-                simulation.run();
-                simulations.add(simulation);
-            }
-
-            System.out.println(reportService.generateReport(simulations));
+        if (queues.size() == 1){
+            simpleSimulation(queues.get(0));
+        } else {
+            networkSimulation(queues);
         }
+    }
+
+    private static void networkSimulation(List<SimpleQueue> queues) {
+        ScheduledEvent firstEvent = ScheduledEvent.builder()
+                .queueId(1)
+                .time(1.0)
+                .type("ARRIVAL")
+                .build();
+
+        Simulation simulation = new Simulation(queues, firstEvent);
+        simulation.run();
+
+        System.out.println(reportService.generateTandemReport(Collections.singletonList(simulation)));
+    }
+
+
+    private static void simpleSimulation(SimpleQueue queue) throws CloneNotSupportedException {
+        List<Simulation> simulations = new ArrayList<>();
+        List<SimpleQueue> queueClonesToSimulations = Arrays.asList(
+                (SimpleQueue) queue.clone(),
+                (SimpleQueue) queue.clone(),
+                (SimpleQueue) queue.clone(),
+                (SimpleQueue) queue.clone(),
+                (SimpleQueue) queue.clone());
+
+        ScheduledEvent firstEvent = ScheduledEvent.builder()
+                .time(3.0)
+                .queueId(queue.getId())
+                .type("ARRIVAL")
+                .build();
+
+        for(int i=0; i<5; i++) {
+            queueClonesToSimulations.get(i).reset();
+            Simulation simulation = new Simulation(Collections.singletonList(queueClonesToSimulations.get(i)), firstEvent);
+            simulation.run();
+            simulations.add(simulation);
+        }
+
+        System.out.println(reportService.generateSimpleReport(simulations));
     }
 }
