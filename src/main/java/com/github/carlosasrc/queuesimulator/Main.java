@@ -46,7 +46,7 @@ public class Main {
         Simulation simulation = new Simulation(queues, firstEvent);
         simulation.run();
 
-        System.out.println(reportService.generateTandemReport(Collections.singletonList(simulation)));
+        System.out.println(reportService.generateNetworkReport(Collections.singletonList(simulation)));
     }
 
 

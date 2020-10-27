@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @Builder
-public class TandemReport {
+public class NetworkReport {
     private double averageTime;
     private List<SimpleQueueReport> queueReports;
 }

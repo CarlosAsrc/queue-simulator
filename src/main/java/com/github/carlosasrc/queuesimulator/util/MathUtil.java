@@ -32,5 +32,4 @@ public class MathUtil {
             report.getPercentages().add(state * 100D / report.getAverageTime());
         }
     }
-
 }

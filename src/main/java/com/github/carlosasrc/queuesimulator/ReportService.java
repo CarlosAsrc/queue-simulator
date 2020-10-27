@@ -2,7 +2,7 @@ package com.github.carlosasrc.queuesimulator;
 
 import com.github.carlosasrc.queuesimulator.model.report.SimpleQueueReport;
 import com.github.carlosasrc.queuesimulator.model.SimpleQueue;
-import com.github.carlosasrc.queuesimulator.model.report.TandemReport;
+import com.github.carlosasrc.queuesimulator.model.report.NetworkReport;
 import com.github.carlosasrc.queuesimulator.util.MathUtil;
 
 import java.util.ArrayList;
@@ -77,13 +77,13 @@ public class ReportService {
 
 
 
-    public String generateTandemReport(List<Simulation> simulations) {
+    public String generateNetworkReport(List<Simulation> simulations) {
         StringBuilder stringBuilder = new StringBuilder();
-        TandemReport tandemReport = integrateTandemSimulations(simulations);
+        NetworkReport networkReport = integrateTandemSimulations(simulations);
 
-        stringBuilder.append("\nTempo total de simulação: ").append(tandemReport.getAverageTime());
+        stringBuilder.append("\nTempo total de simulação: ").append(networkReport.getAverageTime());
 
-        for (SimpleQueueReport simpleQueueReport: tandemReport.getQueueReports()) {
+        for (SimpleQueueReport simpleQueueReport: networkReport.getQueueReports()) {
             stringBuilder.append(simpleQueueReport.getStringReport());
             stringBuilder.append("\n");
         }
@@ -91,8 +91,8 @@ public class ReportService {
         return stringBuilder.toString();
     }
 
-    private TandemReport integrateTandemSimulations(List<Simulation> simulations) {
-        List<TandemReport> reports = new ArrayList<>();
+    private NetworkReport integrateTandemSimulations(List<Simulation> simulations) {
+        List<NetworkReport> reports = new ArrayList<>();
 
         for (Simulation simulation: simulations) {
             List<SimpleQueueReport> queuesReports = new ArrayList<>();
@@ -111,28 +111,13 @@ public class ReportService {
                 queuesReports.add(simpleQueueReport);
             }
 
-            TandemReport tandemReport = TandemReport.builder()
+            NetworkReport networkReport = NetworkReport.builder()
                     .averageTime(simulation.getTime())
                     .queueReports(queuesReports)
                     .build();
-            reports.add(tandemReport);
+            reports.add(networkReport);
         }
 
-//        return integrateTandemReports(reports);
         return reports.get(0);
-    }
-
-
-    private TandemReport integrateTandemReports(List<TandemReport> reports) {
-        double averageTime = (reports.stream().mapToDouble(TandemReport::getAverageTime).sum()) / reports.size();
-
-        List<SimpleQueueReport> averageQueueReports = new ArrayList<>();
-
-
-
-        return TandemReport.builder()
-                .averageTime(averageTime)
-                .queueReports(averageQueueReports)
-                .build();
     }
 }
