@@ -23,6 +23,7 @@ public class SimpleQueueReport {
         String line = "";
 
         report = report.concat("\nFILA: "+queueId);
+        report = report.concat("  G/G/"+servers+(capacity==1000?"":"/"+capacity));
         for (int i=0; i<states.size(); i++) {
             line = String.format("\n%s clientes na fila -->  TEMPO: %.4f", i, states.get(i));
             report = report.concat(line);
