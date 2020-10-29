@@ -13,4 +13,6 @@ import lombok.NoArgsConstructor;
 public class Route {
     private int id;
     private Double probability;
+    private Double begin;
+    private Double end;
 }

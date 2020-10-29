@@ -61,7 +61,7 @@ public class SimpleQueue implements Cloneable {
 
     public Optional<Integer> getMoreLikelyRoutingQueue(double probability) {
         for (Route route: routes) {
-            if (probability <= route.getProbability()) return Optional.of(route.getId());
+            if (probability > route.getBegin() && probability <= route.getEnd()) return Optional.of(route.getId());
         }
         return Optional.empty();
     }
